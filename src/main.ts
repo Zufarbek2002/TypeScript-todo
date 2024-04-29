@@ -10,6 +10,7 @@ const positionType = document.querySelector('.position_type') as HTMLInputElemen
 const salary = document.querySelector('.salary') as HTMLInputElement
 const isMarriedCheck = document.querySelector('#flexCheckDefault') as HTMLInputElement
 
+const addBtn = document.querySelector('.saved_btn') as HTMLButtonElement
 const search = document.querySelector(".search_inp") as HTMLInputElement
 const positionTypeFilter = document.querySelector(".type_position") as HTMLSelectElement
 const isMarriedFilter = document.querySelector(".isMarried_box") as HTMLSelectElement
@@ -58,8 +59,6 @@ const rootData = (dataBase: DataBase[]) => {
     root.innerHTML = str
 }
 rootData(dataBase)
-
-const addBtn = document.querySelector('.saved_btn') as HTMLButtonElement
 
 addBtn.addEventListener('click', () => {
     let dataBase: DataBase[] = []
@@ -116,7 +115,6 @@ const deleteBtn = (dataId: number) => {
 }
 
 // edit
-
 const editBtn = (dataId: number) => {
     let dataBase: DataBase[] = []
     const storedData = localStorage.getItem('datas');
@@ -127,7 +125,7 @@ const editBtn = (dataId: number) => {
     let newData: DataBase | undefined = dataBase.find(e =>
         e.id == dataId
     )
-    let studentDefId: DataBase | undefined = newData;
+    let studentDefId: number | undefined = newData?.id;
 
     if (newData) {
         fName.value = newData.firstName || '';
@@ -151,9 +149,8 @@ const editBtn = (dataId: number) => {
 
     addBtn.addEventListener('click', e => {
         e.preventDefault();
-        let studentId: number | undefined = studentDefId?.id;
         let studentUpd = {
-            id: studentId,
+            id: studentDefId,
             firstName: fName.value,
             lastName: lName.value,
             address: address.value,
@@ -169,7 +166,7 @@ const editBtn = (dataId: number) => {
             dataBase = JSON.parse(storedData);
         }
         let newStudent: DataBase[] = dataBase.map(student =>
-            student.id === studentId ? studentUpd : student
+            student.id === studentDefId ? studentUpd : student
         )
         rootData(newStudent);
         localStorage.setItem('datas', JSON.stringify(newStudent))
@@ -193,17 +190,28 @@ search.addEventListener('input', e => {
 
 positionTypeFilter.addEventListener('click', e => {
     let b: string = (e.target as HTMLSelectElement).value;
+    let dataBase: DataBase[] = []
+    const storedData = localStorage.getItem('datas');
+    if (storedData) {
+        dataBase = JSON.parse(storedData);
+    }
     if (b == "all") {
         rootData(dataBase)
     } else {
-        let filterData = dataBase.filter(e =>
+        let filterData: DataBase[] = dataBase.filter(e =>
             e.typePosition.includes(b)
         )
         rootData(filterData)
     }
 })
+
 isMarriedFilter.addEventListener('click', e => {
     let b: string = (e.target as HTMLSelectElement).value;
+    let dataBase: DataBase[] = []
+    const storedData = localStorage.getItem('datas');
+    if (storedData) {
+        dataBase = JSON.parse(storedData);
+    }
     if (b == "all") {
         rootData(dataBase)
     } else if (b == "true") {

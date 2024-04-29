@@ -9,6 +9,7 @@ const position = document.querySelector('.position_form');
 const positionType = document.querySelector('.position_type');
 const salary = document.querySelector('.salary');
 const isMarriedCheck = document.querySelector('#flexCheckDefault');
+const addBtn = document.querySelector('.saved_btn');
 const search = document.querySelector(".search_inp");
 const positionTypeFilter = document.querySelector(".type_position");
 const isMarriedFilter = document.querySelector(".isMarried_box");
@@ -42,7 +43,6 @@ const rootData = (dataBase) => {
     root.innerHTML = str;
 };
 rootData(dataBase);
-const addBtn = document.querySelector('.saved_btn');
 addBtn.addEventListener('click', () => {
     let dataBase = [];
     const storedData = localStorage.getItem('datas');
@@ -98,7 +98,7 @@ const editBtn = (dataId) => {
         dataBase = JSON.parse(storedData);
     }
     let newData = dataBase.find(e => e.id == dataId);
-    let studentDefId = newData;
+    let studentDefId = newData === null || newData === void 0 ? void 0 : newData.id;
     if (newData) {
         fName.value = newData.firstName || '';
         lName.value = newData.lastName || '';
@@ -121,9 +121,8 @@ const editBtn = (dataId) => {
     }
     addBtn.addEventListener('click', e => {
         e.preventDefault();
-        let studentId = studentDefId === null || studentDefId === void 0 ? void 0 : studentDefId.id;
         let studentUpd = {
-            id: studentId,
+            id: studentDefId,
             firstName: fName.value,
             lastName: lName.value,
             address: address.value,
@@ -138,7 +137,7 @@ const editBtn = (dataId) => {
         if (storedData) {
             dataBase = JSON.parse(storedData);
         }
-        let newStudent = dataBase.map(student => student.id === studentId ? studentUpd : student);
+        let newStudent = dataBase.map(student => student.id === studentDefId ? studentUpd : student);
         rootData(newStudent);
         localStorage.setItem('datas', JSON.stringify(newStudent));
     });
@@ -157,6 +156,11 @@ search.addEventListener('input', e => {
 });
 positionTypeFilter.addEventListener('click', e => {
     let b = e.target.value;
+    let dataBase = [];
+    const storedData = localStorage.getItem('datas');
+    if (storedData) {
+        dataBase = JSON.parse(storedData);
+    }
     if (b == "all") {
         rootData(dataBase);
     }
@@ -167,6 +171,11 @@ positionTypeFilter.addEventListener('click', e => {
 });
 isMarriedFilter.addEventListener('click', e => {
     let b = e.target.value;
+    let dataBase = [];
+    const storedData = localStorage.getItem('datas');
+    if (storedData) {
+        dataBase = JSON.parse(storedData);
+    }
     if (b == "all") {
         rootData(dataBase);
     }
